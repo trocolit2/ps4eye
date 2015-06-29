@@ -6,15 +6,27 @@
 ### Ubuntu 14.*
 ### Ubuntu 15.04
 
+echo "Check Ubuntu Kernel"
+
+## Check ubuntu kernel to correcty 
+
+kernel_version=$(uname -r | sed 's/\(\-[0-9]*\-[a-zA-Z]*\)//')
+kernel_reference="3.16.0"
+if [ "$kernel_version" \< "$kernel_reference" ] ; then
+	echo "ERROR!! Kernel version less than 3.16. Please install compatible Kernel."
+	exit 0
+fi
+
+echo "Kernel Version $kernel_version"
 
 echo "Installing PS4eye camera"
 
-#Check PS4EYE conected
+#Check if ps4eye is conected
 
-check_ps4eye_conected=$(lsusb | grep 05a9:0580)
+ps4eye_conected=$(lsusb | grep 05a9:0580)
 
-if ! [ "$check_ps4eye_conected" ] ; then
-	echo "ERROR PS4EYE NOT CONECTED"
+if ! [ "$ps4eye_conected" ] ; then
+	echo "ERROR!! PS4EYE NOT CONECTED."
 	exit 0
 fi
 
