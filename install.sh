@@ -32,13 +32,14 @@ echo "Installing PS4eye camera"
 
 
 ps4eye_conected=$(lsusb | grep 05a9:0580)
+ps4eye_conected_modified=$(lsusb | grep 05a9:058a)
 
-if ! [ "$ps4eye_conected" ] ; then
+if ! [[ "$ps4eye_conected" || "$ps4eye_conected_modified" ]] ; then
 	echo "ERROR!! PS4EYE NOT CONECTED."
 	exit 0
 fi
 
-echo "Detected ps4eye stereo camera -> $check_ps4eye_conected"
+echo "Detected ps4eye stereo camera"
 
 #Check python-setuptools for install easy_install and pip -> pyusb
 ## check_python_setuptools recebe uma linha do filtro do "dpkg -l | grep python-setuptools" para saber
@@ -95,8 +96,6 @@ Cloning the git PS4EYE
 	echo -e "\n Directory /ps4eye created."
 fi
 
-lsusb -d 05a9:0580
-
 #Initianting the ps4eye camera with python
 ## Entra na pasta /ps4eye/python
 ## inicia o arquivo ps4eye_init.py para configurar a ps4eye no sistema
@@ -109,4 +108,25 @@ ls
 sudo ./ps4eye_init.py
 echo -e "\n Installing PS4eye camera"
 
+#Initianting the ps4eye camera with luvcview
+## Se o 1º argumento de entrada for igual a teste, 
+## Testa se está instalado o luvcview
+## se não tiver, intala-o e depois entra no programa mostrando 
+## a imagem da câmera
+
+teste="teste"
+
+check_luvcview=$(dpkg -l | grep luvcview)
+
+if [ "$1" == "$teste" ]; then
+
+if ! [ "$check_luvcview" ] ; then
+	sudo apt-get install luvcview
+fi
+
+echo -e "luvcview instaled"
+
+luvcview -d /dev/video1 -i 60 -s 1748x408
+
+fi
 
