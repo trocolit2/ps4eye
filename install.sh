@@ -1,19 +1,21 @@
 #!/bin/bash
 
-# EN -> inglês.
+# EN -> ingles.
 # PT -> português. 
 
 # EN -> 
 ## Script to automatic install ps4eye driver.
 ## This code is based on https://github.com/ps4eye/ps4eye 
+# PT ->
+## Script para instalar o driver da ps4eye automatico.
+## O código é baseado em https://github.com/ps4eye/ps4eye 
 
 # EN -> 
 ## This script was tested in:
 # PT ->
 ## Este script foi testado em:
-
-## Ubuntu 14.*
-## Ubuntu 15.04
+### Ubuntu 14.*
+### Ubuntu 15.04
 
 # EN -> 
 ## Colors
@@ -27,11 +29,13 @@ standColor="$(tput sgr 0)"
 
 # EN -> 
 ## Check ubuntu kernel to correcty
-###
+### kernel_version receives a line of the filter "uname -r | sed 's/\(\-[0-9]* ..." for compare
+### if the kernel is compatible with the instalation of PS4eye.
+### if kernel_version is less than kernel_reference, show a error menssage and exit install 
 
 # PT ->
 ## Checar se o kernel do ubuntu esta correto
-### kernel_version recebe uma linha do filtro do "uname -r | sed 's/\(\-[0-9]* ..." para saber
+### kernel_version recebe uma linha do filtro do "uname -r | sed 's/\(\-[0-9]* ..." para comparar
 ### se o kernel é compativel com a instalação da PS4eye.
 ### se kernel_version for menor que kernel_reference, mostra uma mensagem de error e sai da instalação
 
@@ -50,12 +54,14 @@ echo "Installing PS4eye camera"
 
 # EN -> 
 ## Check if ps4eye is conected
-###
+### ps4eye_conected receives a line of the filter "lsusb | grep 05a9:0580" for compare
+### if the ps4eye is plugged
+### if not receive anything, it show a error message and exit install
 
 # PT ->
 ## Checar se a PS4eye esta conectada
-### ps4eye_conected recebe uma linha do filtro do "lsusb | grep 05a9:0580" para saber
-### se a camera esta plugada
+### ps4eye_conected recebe uma linha do filtro do "lsusb | grep 05a9:0580" para comparar
+### se a ps4eye esta plugada
 ### se não receber nada, mostra uma mensagem de error e sai da instalação
 
 
@@ -71,12 +77,17 @@ echo "${green}Detected ps4eye stereo camera${standColor}"
 
 # EN ->
 ## Check python-setuptools for install easy_install and pip -> pyusb
+### check_python_setuptools receives a line of filter "dpkg -l | grep python-setuptools" for compare
+### if the python-setuptoos is installed
+### if not receive anything, install python-setuptoos
+### http://www.hacksparrow.com/ubuntu-how-to-install-easy_install.html
 
 # PT ->
 ## Checar se o python-setuptools está instalado para instalar o easy_install e o pip -> pyusb
-### check_python_setuptools recebe uma linha do filtro do "dpkg -l | grep python-setuptools" para saber
+### check_python_setuptools recebe uma linha do filtro do "dpkg -l | grep python-setuptools" para comparar
 ### se o python-setuptoos esta instalado
-### se não receber nada, intala o python-setuptoos
+### se não receber nada, instala o python-setuptoos
+### http://www.hacksparrow.com/ubuntu-how-to-install-easy_install.html
 
 check_python_setuptools=$(dpkg -l | grep python-setuptools)
 
@@ -88,10 +99,13 @@ echo  -e "\n ${green}Python-setuptools installed${standColor}"
 
 # EN ->
 ## Check PIP installed
+### check_pip receives a line of the filter "which pip" for compare
+### if the pip is installed
+### if not receive anything, install pip
 
 # PT ->
 ## Checar se o PIP esta instalado
-### check_pip recebe uma linha do filtro do "which pip" para saber
+### check_pip recebe uma linha do filtro do "which pip" para comprar
 ### se o pip esta instalado
 ### se não receber nada, intala o pip
  
@@ -107,11 +121,14 @@ echo  -e "\n${green}pip and pyusb installed${standColor}"
 
 # EN ->
 ## Check GIT installed
+### check_git_installed receives a line of the filter "dpkg -l | grep..." for compare
+### if git is installed
+### if not receive anything, install git
 
 # PT ->
 ## Checar se o GIT esta instalado
-### check_git_installed recebe uma linha do filtro do "dpkg -l | grep..." para saber
-### se se o git esta instalado
+### check_git_installed recebe uma linha do filtro do "dpkg -l | grep..." para comparar
+### se o git esta instalado
 ### se não receber nada, intala o git
 
 check_git_installed=$(dpkg -l | grep -E ' git ')
@@ -124,10 +141,13 @@ echo  -e "\n ${green}GIT installed${standColor}"
 
 # EN ->
 ## Check folder ps4eye
+### directory receives the path for instalation.
+### if the folder exists only shows it. 
+### if not, does a clone of the repository https://github.com/ps4eye/ps4eye 
 
 # PT ->
 ## Checar se a pasta ps4eye existe
-### directory é onde esta o arquivo de instalação
+### directory recebe o caminho para instalação.
 ### se a pasta existe só mostra que ela existe
 ### se não, faz um clone do repositório https://github.com/ps4eye/ps4eye 
 
@@ -142,6 +162,8 @@ fi
 
 # EN ->
 ## Initianting the ps4eye camera driver with python
+### Go into the folder /ps4eye/python
+### Start the ps4eye_init.py for configure the ps4eye in system
 
 # PT ->
 ## Iniciando o driver da camera ps4eye por python
@@ -156,15 +178,19 @@ echo -e "\n ${green}PS4eye camera driver installed ${standColor}"
 
 # EN ->
 ## Initianting the visualization of the ps4eye camera with luvcview
+### if the first argument is equal "test",
+### check_luvcview receives a line of the  for compare
+### if the luvcview is installed
+### if not, install luvcview, after enter the program showing the camera image
 
 # PT ->
 ## Iniciando a visualização da câmera PS4eye pelo luvcview
-### Se o 1º argumento de entrada for igual a teste, 
-### Testa se está instalado o luvcview
-### se não tiver, intala-o e depois entra no programa mostrando 
-### a imagem da câmera
+### Se o 1º argumento de entrada for igual a "test", 
+### check_luvcview recebe uma linha do filtro "dpkg -l | grep luvcview" para comparar
+### se o luvcview esta instalado
+### se não tiver, intala-o e depois entra no programa mostrando a imagem da câmera
 
-teste="teste"
+test="test"
 
 if [ "$1" == "$teste" ]; then
 
@@ -179,13 +205,15 @@ sleep 1
 echo -e "\n ${green}PS4eyeluvcview instaled${standColor}"
 
 # EN ->
-##
+## Filter for find the path of PS4eye
+### For ensure that the luvcview will show the image PS4eye makes up a loop in /dev/video*
+### check_device receives a filter "udevadm info ..." with the idVendor and idProduct of PS4eye,
+### http://wiki.openrobotino.org/index.php?title=USB_cameras
 
 # PT ->
 ## Filtro para encontrar o caminho da PS4eye
-### Para mostrar a imagem da PS4eye faz-se um for no /dev/video* 
-### check_device é o filtro do udevadm info com o idVendor e idProduct da PS4eye, 
-### assim acha justamente o endereço da PS4eye para usar no comando da luvcview.
+### Para certificar que o luvcview irá mostrar a imagem da PS4eye faz-se um loop no /dev/video* 
+### check_device recebe uma linha do filtro do "udevadm info ..." com o idVendor e idProduct da PS4eye, 
 ### http://wiki.openrobotino.org/index.php?title=USB_cameras
 
 FILES=/dev/video*
