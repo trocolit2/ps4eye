@@ -7,7 +7,7 @@
 ## Script to automatic install ps4eye driver.
 ## This code is based on https://github.com/ps4eye/ps4eye 
 # PT ->
-## Script para instalar o driver da ps4eye automatico.
+## Script para instalar o driver da ps4eye automaticamente.
 ## O código é baseado em https://github.com/ps4eye/ps4eye 
 
 # EN -> 
@@ -155,7 +155,7 @@ directory=$(pwd)
 if [ -d "$directory/ps4eye" ] ; then
 	echo -e "\nDirectory /ps4eye exists."
 else
-Cloning the git PS4EYE
+echo "Cloning the git PS4EYE"
 	git clone https://github.com/ps4eye/ps4eye
 	echo -e "\n Directory /ps4eye created."
 fi
@@ -192,17 +192,17 @@ echo -e "\n ${green}PS4eye camera driver installed ${standColor}"
 
 test="test"
 
-if [ "$1" == "$teste" ]; then
-
-check_luvcview=$(dpkg -l | grep luvcview)
-
-if ! [ "$check_luvcview" ] ; then
-	sudo apt-get install luvcview
-fi
-
 sleep 1
 
-echo -e "\n ${green}PS4eyeluvcview instaled${standColor}"
+if [ "$1" == "$test" ]; then
+
+	check_luvcview=$(dpkg -l | grep luvcview)
+
+	if ! [ "$check_luvcview" ] ; then
+		sudo apt-get install luvcview
+	fi
+
+	echo -e "\n ${green}PS4eyeluvcview instaled${standColor}"
 
 # EN ->
 ## Filter for find the path of PS4eye
@@ -216,22 +216,20 @@ echo -e "\n ${green}PS4eyeluvcview instaled${standColor}"
 ### check_device recebe uma linha do filtro do "udevadm info ..." com o idVendor e idProduct da PS4eye, 
 ### http://wiki.openrobotino.org/index.php?title=USB_cameras
 
-FILES=/dev/video*
-for f in $FILES
-do
+	FILES=/dev/video*
+	for f in $FILES; do
 
-check_device=$(udevadm info --query=all --attribute-walk --name=$f | grep -E "05a9|058a")
+		check_device=$(udevadm info --query=all --attribute-walk --name=$f | grep -E "05a9|058a")
+	
+		if [ "$check_device" ] ; then
+			way_device=$f
+			break
+		fi
 
-if [ "$check_device" ] ; then
-way_device=$f
-break
+	done
+
+	echo -e "\nThe way of PS4eye is: $way_device"
+
+	luvcview -d $way_device -i 60 -s 1748x408
+
 fi
-
-done
-
-echo -e "\nThe way of PS4eye is: $way_device"
-
-luvcview -d $way_device -i 60 -s 1748x408
-
-fi
-
