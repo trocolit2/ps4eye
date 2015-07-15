@@ -27,6 +27,17 @@ red="$(tput setaf 1)"
 green="$(tput setaf 2)"
 standColor="$(tput sgr 0)"
 
+
+# EN -> 
+## if the first argument is "remove", dont install and remove the programs installed in the installation
+# PT ->
+## se o primeiro argmento for "remove", não instala e remove os programas instalados na instalação
+
+argument1="$1"
+
+if [ "$argument1" != "remove" ];then
+
+
 # EN -> 
 ## Check ubuntu kernel to correcty
 ### kernel_version receives a line of the filter "uname -r | sed 's/\(\-[0-9]* ..." for compare
@@ -39,19 +50,19 @@ standColor="$(tput sgr 0)"
 ### se o kernel é compativel com a instalação da PS4eye.
 ### se kernel_version for menor que kernel_reference, mostra uma mensagem de error e sai da instalação
 
-echo "Check Ubuntu Kernel"
+	echo "Check Ubuntu Kernel"
 
-kernel_version=$(uname -r | sed 's/\(\-[0-9]*\-[a-zA-Z]*\)//')
-kernel_reference="3.16.0"
-if [ "$kernel_version" \< "$kernel_reference" ] ; then
-	echo "${red}ERROR!! Kernel version less than 3.16. Please install compatible Kernel. ${standColor}"
-	exit 0
-fi
-
-echo "${green}Kernel Version $kernel_version${standColor}"
-
-echo "Installing PS4eye camera"
-
+	kernel_version=$(uname -r | sed 's/\(\-[0-9]*\-[a-zA-Z]*\)//')
+	kernel_reference="3.16.0"
+	if [ "$kernel_version" \< "$kernel_reference" ] ; then
+		echo "${red}ERROR!! Kernel version less than 3.16. Please install compatible Kernel. ${standColor}"
+		exit 0
+	fi
+	
+	echo "${green}Kernel Version $kernel_version${standColor}"
+	
+	echo "Installing PS4eye camera"
+	
 # EN -> 
 ## Check if ps4eye is conected
 ### ps4eye_conected receives a line of the filter "lsusb | grep 05a9:0580" for compare
@@ -65,16 +76,16 @@ echo "Installing PS4eye camera"
 ### se não receber nada, mostra uma mensagem de error e sai da instalação
 
 
-ps4eye_conected=$(lsusb | grep 05a9:0580)
-ps4eye_conected_modified=$(lsusb | grep 05a9:058a)
-
-if ! [[ "$ps4eye_conected" || "$ps4eye_conected_modified" ]] ; then
-	echo "${red}ERROR!! PS4EYE NOT CONECTED.${standColor}"
-	exit 0
-fi
-
-echo "${green}Detected ps4eye stereo camera${standColor}"
-
+	ps4eye_conected=$(lsusb | grep 05a9:0580)
+	ps4eye_conected_modified=$(lsusb | grep 05a9:058a)
+	
+	if ! [[ "$ps4eye_conected" || "$ps4eye_conected_modified" ]] ; then
+		echo "${red}ERROR!! PS4EYE NOT CONECTED.${standColor}"
+		exit 0
+	fi
+	
+	echo "${green}Detected ps4eye stereo camera${standColor}"
+	
 # EN ->
 ## Check python-setuptools for install easy_install and pip -> pyusb
 ### check_python_setuptools receives a line of filter "dpkg -l | grep python-setuptools" for compare
@@ -89,14 +100,14 @@ echo "${green}Detected ps4eye stereo camera${standColor}"
 ### se não receber nada, instala o python-setuptoos
 ### http://www.hacksparrow.com/ubuntu-how-to-install-easy_install.html
 
-check_python_setuptools=$(dpkg -l | grep python-setuptools)
-
-if ! [ "$check_python_setuptools" ] ; then
-	sudo apt-get install python-setuptools 
-fi
- 
-echo  -e "\n ${green}Python-setuptools installed${standColor}"
-
+	check_python_setuptools=$(dpkg -l | grep python-setuptools)
+	
+	if ! [ "$check_python_setuptools" ] ; then
+		sudo apt-get install python-setuptools 
+	fi
+	 
+	echo  -e "\n ${green}Python-setuptools installed${standColor}"
+	
 # EN ->
 ## Check PIP installed
 ### check_pip receives a line of the filter "which pip" for compare
@@ -110,15 +121,15 @@ echo  -e "\n ${green}Python-setuptools installed${standColor}"
 ### se não receber nada, intala o pip
  
 
-check_pip=$(which pip)
-
-if ! [ "$check_pip" ] ; then
-	sudo easy_install pip
-	sudo pip install --pre pyusb
-fi
-
-echo  -e "\n${green}pip and pyusb installed${standColor}"
-
+	check_pip=$(which pip)
+	
+	if ! [ "$check_pip" ] ; then
+		sudo easy_install pip
+		sudo pip install --pre pyusb
+	fi
+	
+	echo  -e "\n${green}pip and pyusb installed${standColor}"
+	
 # EN ->
 ## Check GIT installed
 ### check_git_installed receives a line of the filter "dpkg -l | grep..." for compare
@@ -131,14 +142,14 @@ echo  -e "\n${green}pip and pyusb installed${standColor}"
 ### se o git esta instalado
 ### se não receber nada, intala o git
 
-check_git_installed=$(dpkg -l | grep -E ' git ')
-
-if ! [ "$check_git_installed" ] ; then
-	sudo apt-get install git
-fi
-
-echo  -e "\n ${green}GIT installed${standColor}"
-
+	check_git=$(dpkg -l | grep -E ' git ')
+	
+	if ! [ "$check_git" ] ; then
+		sudo apt-get install git
+	fi
+	
+	echo  -e "\n ${green}GIT installed${standColor}"
+	
 # EN ->
 ## Check folder ps4eye
 ### directory receives the path for instalation.
@@ -151,15 +162,15 @@ echo  -e "\n ${green}GIT installed${standColor}"
 ### se a pasta existe só mostra que ela existe
 ### se não, faz um clone do repositório https://github.com/ps4eye/ps4eye 
 
-directory=$(pwd)
-if [ -d "$directory/ps4eye" ] ; then
-	echo -e "\nDirectory /ps4eye exists."
-else
-echo "Cloning the git PS4EYE"
-	git clone https://github.com/ps4eye/ps4eye
-	echo -e "\n Directory /ps4eye created."
-fi
-
+	directory=$(pwd)
+	if [ -d "$directory/ps4eye" ] ; then
+		echo -e "\nDirectory /ps4eye exists."
+	else
+	echo "Cloning the git PS4EYE"
+		git clone https://github.com/ps4eye/ps4eye
+		echo -e "\n Directory /ps4eye created."
+	fi
+	
 # EN ->
 ## Initianting the ps4eye camera driver with python
 ### Go into the folder /ps4eye/python
@@ -170,11 +181,11 @@ fi
 ### Entra na pasta /ps4eye/python
 ### inicia o arquivo ps4eye_init.py para configurar a ps4eye no sistema
 
-cd ps4eye/
-cd python/
-sudo ./ps4eye_init.py
-
-echo -e "\n ${green}PS4eye camera driver installed ${standColor}"
+	cd ps4eye/
+	cd python/
+	sudo ./ps4eye_init.py
+	
+	echo -e "\n ${green}PS4eye camera driver installed ${standColor}"
 
 # EN ->
 ## Initianting the visualization of the ps4eye camera with luvcview
@@ -190,20 +201,20 @@ echo -e "\n ${green}PS4eye camera driver installed ${standColor}"
 ### se o luvcview esta instalado
 ### se não tiver, intala-o e depois entra no programa mostrando a imagem da câmera
 
-test="test"
-
-sleep 1
-
-if [ "$1" == "$test" ]; then
-
-	check_luvcview=$(dpkg -l | grep luvcview)
-
-	if ! [ "$check_luvcview" ] ; then
-		sudo apt-get install luvcview
-	fi
-
-	echo -e "\n ${green}PS4eyeluvcview instaled${standColor}"
-
+	test="test"
+	
+	sleep 1
+	
+	if [ "$argument1" == "$test" ]; then
+	
+		check_luvcview=$(dpkg -l | grep luvcview)
+	
+		if ! [ "$check_luvcview" ] ; then
+			sudo apt-get install luvcview
+		fi
+	
+		echo -e "\n ${green}PS4eyeluvcview instaled${standColor}"
+	
 # EN ->
 ## Filter for find the path of PS4eye
 ### For ensure that the luvcview will show the image PS4eye makes up a loop in /dev/video*
@@ -216,20 +227,71 @@ if [ "$1" == "$test" ]; then
 ### check_device recebe uma linha do filtro do "udevadm info ..." com o idVendor e idProduct da PS4eye, 
 ### http://wiki.openrobotino.org/index.php?title=USB_cameras
 
-	FILES=/dev/video*
-	for f in $FILES; do
-
-		check_device=$(udevadm info --query=all --attribute-walk --name=$f | grep -E "05a9|058a")
+		FILES=/dev/video*
+		for f in $FILES; do
 	
-		if [ "$check_device" ] ; then
-			way_device=$f
-			break
+			check_device=$(udevadm info --query=all --attribute-walk --name=$f | grep -E "05a9|058a")
+		
+			if [ "$check_device" ] ; then
+				way_device=$f
+				break
+			fi
+	
+		done
+	
+		echo -e "\nThe way of PS4eye is: $way_device"
+
+		luvcview -d $way_device -i 60 -s 1748x408
+
+
+	fi
+
+
+else
+
+	check_python_setuptools=$(dpkg -l | grep python-setuptools)
+
+	if [ "$check_python_setuptools" ] ; then
+		sudo apt-get purge python-setuptools
+		check_python_setuptools=$(dpkg -l | grep python-setuptools)
+		if ! [ "$check_python_setuptools" ] ; then
+			echo  -e "\n ${green}Python-setuptools removed${standColor}"
 		fi
-
-	done
-
-	echo -e "\nThe way of PS4eye is: $way_device"
-
-	luvcview -d $way_device -i 60 -s 1748x408
-
-fi
+	fi
+	
+	check_pip=$(which pip)
+	
+	if [ "$check_pip" ] ; then
+		read -p "Do you want to remove pip? [Y/n]" pip_remove
+		if [ "$pip_remove" == "y" ] || [ "$pip_remove" == "Y" ] ; then
+			sudo rm "$check_pip"
+		check_pip=$(which pip)
+		if ! [ "$check_pip" ] ; then
+			echo  -e "\n ${green} pip removed${standColor}"
+		fi
+		fi
+	
+	fi
+	
+	check_git=$(dpkg -l | grep -E ' git ')
+	
+	if [ "$check_git" ] ; then
+		sudo apt-get purge git
+		check_git=$(dpkg -l | grep -E ' git ')
+		if ! [ "$check_git" ] ; then
+			echo  -e "\n ${green}GIT removed${standColor}"
+		fi
+	fi
+		
+	check_luvcview=$(dpkg -l | grep luvcview)
+	
+	if [ "$check_luvcview" ] ; then
+		sudo apt-get purge luvcview
+		check_luvcview=$(dpkg -l | grep luvcview)
+		if ! [ "$check_luvcview" ] ; then
+			echo -e "\n ${green}PS4eyeluvcview removed${standColor}"
+		fi
+	fi
+	
+	
+	fi

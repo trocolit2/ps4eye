@@ -1,5 +1,5 @@
 - Documentar melhor o processo de instalação no arquivo instal.sh; 10/07/2015 ok
 - Incluir o procedimento de teste no script de instalação e acordo com o argumento(install.sh teste); 10/07/2015 ok
-- Incluir o processo de remoção do driver no script de instalação; 17/07/2015
+- Incluir o processo de remoção do driver no script de instalação; 17/07/2015 ok
 - Fazer um exemplo no opencv que acesse a imagem da PS4eye; 31/07/2015
 - Fazer uma biblioteca para utilizar a ps4eye como ferramenta.
