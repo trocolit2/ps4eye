@@ -162,12 +162,14 @@ if [ "$argument1" != "remove" ];then
 ### se a pasta existe só mostra que ela existe
 ### se não, faz um clone do repositório https://github.com/ps4eye/ps4eye 
 
+ps4eyefolder="drive"
+
 	directory=$(pwd)
-	if [ -d "$directory/ps4eye" ] ; then
+	if [ -d "$directory/$ps4eyefolder" ] ; then
 		echo -e "\nDirectory /ps4eye exists."
 	else
 	echo "Cloning the git PS4EYE"
-		git clone https://github.com/ps4eye/ps4eye
+		git clone https://github.com/ps4eye/ps4eye "$ps4eyefolder"
 		echo -e "\n Directory /ps4eye created."
 	fi
 	
@@ -181,8 +183,7 @@ if [ "$argument1" != "remove" ];then
 ### Entra na pasta /ps4eye/python
 ### inicia o arquivo ps4eye_init.py para configurar a ps4eye no sistema
 
-	cd ps4eye/
-	cd python/
+	cd $ps4eyefolder/python
 	sudo ./ps4eye_init.py
 	
 	echo -e "\n ${green}PS4eye camera driver installed ${standColor}"
