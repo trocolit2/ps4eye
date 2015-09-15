@@ -18,8 +18,6 @@ set(SOURCE_LIBS ${SOURCE_LIBS} "-ludev -fpermissive -std=c++0x")
 #endforeach()
 
 #I like to keep test files in a separate source directory called test
-#file(GLOB TEST_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} VPTools_test.cpp)
-#file(GLOB TEST_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} StixelTools_test.cpp)
 file(GLOB TEST_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *test.cpp)
 #file(GLOB TEST_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *evaluation.cpp)
 

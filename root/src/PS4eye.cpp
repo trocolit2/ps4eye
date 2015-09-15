@@ -16,7 +16,7 @@
 #define PS4EYE_DEVICE_SYSNAME "video"
 
 PS4eye::PS4eye(unsigned int deviceNum, resolutionEnum resolution = PS4EYE_RESOLUTION_640x400, frameRateEnum frameRate = PS4EYE_FPS_30) {
-    videoCapture.set(CV_CAP_PROP_FRAME_WIDTH, (double) PS4EYE_RESOLUTION_640x400);
+//    videoCapture.set(CV_CAP_PROP_FRAME_WIDTH, (double) PS4EYE_RESOLUTION_640x400);
     videoCapture = cv::VideoCapture(deviceNum);
 }
 

@@ -23,28 +23,48 @@
 #include <boost/test/unit_test_suite.hpp>
 
 BOOST_AUTO_TEST_CASE(checkPS4eyeDeviceSearch) {
-
-    std::vector<std::string> devicePath;
-    std::vector<uint> deviceNum = PS4eye::ps4eyeDevices(&devicePath);
-
-    std::cout << "TESTE METHOD SEARCH PS4eye DEVICES" << std::endl;
-    for (int i = 0; i < deviceNum.size(); ++i) {
-        std::cout << "DEVICE NUM: " << deviceNum[i] << " PATH: " << devicePath[i] << std::endl;
-        BOOST_CHECK_EQUAL("/dev/video1", devicePath[i]);
-        BOOST_CHECK_EQUAL(1, deviceNum[i]);
-    }
+//
+//    std::vector<std::string> devicePath;
+//    std::vector<uint> deviceNum = PS4eye::ps4eyeDevices(&devicePath);
+//
+//    std::cout << "TESTE METHOD SEARCH PS4eye DEVICES" << std::endl;
+//    for (int i = 0; i < deviceNum.size(); ++i) {
+//        std::cout << "DEVICE NUM: " << deviceNum[i] << " PATH: " << devicePath[i] << std::endl;
+//        BOOST_CHECK_EQUAL("/dev/video1", devicePath[i]);
+//        BOOST_CHECK_EQUAL(1, deviceNum[i]);
+//    }
 
 }
 
 BOOST_AUTO_TEST_CASE(checkPS4Eye) {
 
-    PS4eye ps4eye(PS4eye::ps4eyeDevices()[0]);
+//    PS4eye ps4eye(PS4eye::ps4eyeDevices()[0]);
 
-    while (true) {
-        cv::imshow("PS4Eye", ps4eye.grabFrame());
+//    while (true) {
+//        cv::imshow("PS4Eye", ps4eye.grabFrame());
 //        ps4eye.getFrameRate();
-        ps4eye.getResolution();
-        cv::waitKey(1);
-    }
+//        ps4eye.getResolution();
+//        cv::waitKey(1);
+//    }
+
+//    std::cout << "CAMERA 1" << std::endl;
+//    cv::VideoCapture camera(0);
+//    std::cout << "CAMERA 2" << std::endl;
+//    cv::Mat frame;
+////    camera.release();
+//    while (true) {
+//        std::cout << "CAMERA 3" << std::endl;
+//        if (camera.isOpened()) {
+//            std::cout << "CAMERA 4" << std::endl;
+//            camera >> frame;
+//            std::cout << "CAMERA 5" << std::endl;
+//            cv::imshow("OUT 1", frame);
+//            std::cout << "CAMERA 6" << std::endl;
+//            cv::waitKey(20);
+//        } else {
+//            std::cout << "CAMERA PROBLEM" << std::endl;
+//            break;
+//        }
+//    }
 
 }

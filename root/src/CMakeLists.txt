@@ -10,7 +10,7 @@ find_package(OpenCV REQUIRED)
 #find_package(Boost COMPONENTS regex REQUIRED)
 #include_directories (${Boost_INCLUDE_DIRS})
 
-set(SOURCE_LIBS_LOCAL ${OpenCV_LIBS})
+set(SOURCE_LIBS_LOCAL ${OpenCV_LIBS} "-ludev")
 #${Boost_REGEX_LIBRARY}
 
 ## ADD SUBDIRECTORIES FROM LIBRARY
@@ -25,5 +25,5 @@ set(SOURCE_LIBS ${SOURCE_LIBS} ${SOURCE_LIBS_LOCAL} PARENT_SCOPE)
 ## EXECUTABLES SESSION ##
 #########################
 
-#add_executable(AS2C main.cxx)
-#target_link_libraries(AS2C ${SOURCE_LIBS})
+#add_executable(ps4eye main.cxx)
+#target_link_libraries(ps4eye ${SOURCE_LIBS})
