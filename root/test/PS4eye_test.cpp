@@ -8,6 +8,7 @@
 #include <PS4eye.h>
 #include <iostream>
 #include <string>
+#include <sys/timeb.h>
 
 #define BOOST_TEST_DYN_LINK
 //Define our Module name (prints at testing)
@@ -38,33 +39,26 @@ BOOST_AUTO_TEST_CASE(checkPS4eyeDeviceSearch) {
 
 BOOST_AUTO_TEST_CASE(checkPS4Eye) {
 
+//    struct timeb start, end;
+//
 //    PS4eye ps4eye(PS4eye::ps4eyeDevices()[0]);
-
+//
 //    while (true) {
+//        ftime(&start);
+//
 //        cv::imshow("PS4Eye", ps4eye.grabFrame());
 //        ps4eye.getFrameRate();
 //        ps4eye.getResolution();
 //        cv::waitKey(1);
-//    }
-
-//    std::cout << "CAMERA 1" << std::endl;
-//    cv::VideoCapture camera(0);
-//    std::cout << "CAMERA 2" << std::endl;
-//    cv::Mat frame;
-////    camera.release();
-//    while (true) {
-//        std::cout << "CAMERA 3" << std::endl;
-//        if (camera.isOpened()) {
-//            std::cout << "CAMERA 4" << std::endl;
-//            camera >> frame;
-//            std::cout << "CAMERA 5" << std::endl;
-//            cv::imshow("OUT 1", frame);
-//            std::cout << "CAMERA 6" << std::endl;
-//            cv::waitKey(20);
-//        } else {
-//            std::cout << "CAMERA PROBLEM" << std::endl;
-//            break;
-//        }
+//
+//        ftime(&end);
+//        double sec = ((end.time - start.time) + (end.millitm - start.millitm) / 1000.0);
+//        uint fps = 1.0 / sec * 1.0;
+//
+//        std::cout << " PS4EYE FPS =  " << fps;
+//        std::cout << " SECONDS =  " << sec;
+//        std::cout << std::endl;
+//
 //    }
 
 }

@@ -6,6 +6,7 @@
  */
 
 #include <V4LTools.h>
+#include <PS4eye.h>
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE "V4LTools_test"
@@ -14,215 +15,68 @@
 #include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test_suite.hpp>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <linux/videodev2.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <unistd.h>
+#include <iostream>
+#include <exception>
+#include <sys/timeb.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-uint8_t *buffer;
-struct v4l2_format fmt;
+#define RESOLUTION_VGA_WIDTH 1748
+#define RESOLUTION_VGA_HEIGHT 408
+static cv::Rect frame_VGA(48, 0, 1280, 400);
 
-static int xioctl(int fd, int request, void *arg) {
-    int r;
+#define RESOLUTION_HD_WIDTH 3448
+#define RESOLUTION_HD_HEIGHT 808
+static cv::Rect frame_HD(48, 0, 1280 * 2, 800);
 
-    do
-        r = ioctl(fd, request, arg);
-    while (-1 == r && EINTR == errno);
+static std::string devicePath;
 
-    return r;
+struct defineDevice {
+    defineDevice() {
+        std::vector<std::string> devicesPath;
+        PS4eye::ps4eyeDevices(&devicesPath);
+        devicePath = devicesPath[0];
+    }
+};
+
+BOOST_GLOBAL_FIXTURE(defineDevice);
+
+BOOST_AUTO_TEST_CASE(checkV4lToolGoodInit) {
+
+//    cv::Mat rawImage(RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_WIDTH, CV_8UC2);
+//    cv::Mat stereoImage(frame_VGA.height, frame_VGA.width, CV_8UC3);
+//        cv::cvtColor(rawImage(frame_VGA), stereoImage, CV_YUV2BGR_YUYV);
+
+    V4LTools videoDevice(devicePath, RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_WIDTH);
+
+    bool hasData = false;
+
+    unsigned char * buf = 0;
+
+    for (int var = 0; var < 10; ++var) {
+        buf = videoDevice.graFrame();
+        hasData = (buf != 0);
+    }
+
+    BOOST_CHECK_EQUAL(true, hasData);
 }
 
-int print_caps(int fd) {
-    struct v4l2_capability caps = { };
-    if (-1 == xioctl(fd, VIDIOC_QUERYCAP, &caps)) {
-        perror("Querying Capabilities");
-        return 1;
-    }
+BOOST_AUTO_TEST_CASE(checkV4lToolInitAndChangeCameraParameters) {
 
-    printf("Driver Caps:\n"
-            "  Driver: \"%s\"\n"
-            "  Card: \"%s\"\n"
-            "  Bus: \"%s\"\n"
-            "  Version: %d.%d\n"
-            "  Capabilities: %08x\n", caps.driver, caps.card, caps.bus_info, (caps.version >> 16) && 0xff, (caps.version >> 24) && 0xff, caps.capabilities);
+//    cv::Mat rawImage(RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_WIDTH, CV_8UC2);
+//    cv::Mat stereoImage(frame_VGA.height, frame_VGA.width, CV_8UC3);
+//        cv::cvtColor(rawImage(frame_VGA), stereoImage, CV_YUV2BGR_YUYV);
 
-    struct v4l2_cropcap cropcap = { 0 };
-    cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    if (-1 == xioctl(fd, VIDIOC_CROPCAP, &cropcap)) {
-        perror("Querying Cropping Capabilities");
-        return 1;
-    }
+    V4LTools videoDevice(devicePath, RESOLUTION_HD_HEIGHT, RESOLUTION_HD_WIDTH);
+    unsigned char *bufHD = videoDevice.graFrame();
 
-    printf("Camera Cropping:\n"
-            "  Bounds: %dx%d+%d+%d\n"
-            "  Default: %dx%d+%d+%d\n"
-            "  Aspect: %d/%d\n", cropcap.bounds.width, cropcap.bounds.height, cropcap.bounds.left, cropcap.bounds.top, cropcap.defrect.width, cropcap.defrect.height, cropcap.defrect.left,
-            cropcap.defrect.top, cropcap.pixelaspect.numerator, cropcap.pixelaspect.denominator);
+//    videoDevice.resetCameraParameters(RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_HEIGHT, 120);
+//    unsigned char *bufVGA = videoDevice.graFrame();
+//
+//    unsigned int width = 0, height = 0;
+//    float fps = 0;
+//    videoDevice.getCameraParameters(height, width, fps);
 
-    int support_grbg10 = 0;
-
-    struct v4l2_fmtdesc fmtdesc = { 0 };
-    fmtdesc.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    char fourcc[5] = { 0 };
-    char c, e;
-    printf("  FMT : CE Desc\n--------------------\n");
-    while (0 == xioctl(fd, VIDIOC_ENUM_FMT, &fmtdesc)) {
-        strncpy(fourcc, (char *) &fmtdesc.pixelformat, 4);
-        if (fmtdesc.pixelformat == V4L2_PIX_FMT_SGRBG10)
-            support_grbg10 = 1;
-        c = fmtdesc.flags & 1 ? 'C' : ' ';
-        e = fmtdesc.flags & 2 ? 'E' : ' ';
-        printf("  %s: %c%c %s\n", fourcc, c, e, fmtdesc.description);
-        fmtdesc.index++;
-    }
-    /*
-     if (!support_grbg10)
-     {
-     printf("Doesn't support GRBG10.\n");
-     return 1;
-     }*/
-
-    fmt = {0};
-    fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    fmt.fmt.pix.width = 2000;
-    fmt.fmt.pix.height = 1000;
-    fmt.fmt.vbi.sampling_rate = 30;
-    //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_BGR24;
-    //fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_GREY;
-//    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
-    fmt.fmt.pix.field = V4L2_FIELD_NONE;
-
-    if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt)) {
-        perror("Setting Pixel Format");
-        return 1;
-    }
-
-    strncpy(fourcc, (char *) &fmt.fmt.pix.pixelformat, 4);
-    printf("Selected Camera Mode:\n"
-            "  Width: %d\n"
-            "  Height: %d\n"
-            "  PixFmt: %s\n"
-            "  Field: %d\n"
-            "  FPS: %d\n", fmt.fmt.pix.width, fmt.fmt.pix.height, fourcc, fmt.fmt.pix.field, fmt.fmt.vbi.sampling_rate);
-    return 0;
-}
-
-int init_mmap(int fd) {
-    struct v4l2_requestbuffers req = { 0 };
-    req.count = 1;
-    req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    req.memory = V4L2_MEMORY_MMAP;
-
-    if (-1 == xioctl(fd, VIDIOC_REQBUFS, &req)) {
-        perror("Requesting Buffer");
-        return 1;
-    }
-
-    struct v4l2_buffer buf = { 0 };
-    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    buf.memory = V4L2_MEMORY_MMAP;
-    buf.index = 0;
-    if (-1 == xioctl(fd, VIDIOC_QUERYBUF, &buf)) {
-        perror("Querying Buffer");
-        return 1;
-    }
-
-    buffer = mmap(NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, buf.m.offset);
-    printf("Length: %d\nAddress: %p\n", buf.length, buffer);
-    printf("Image Length: %d\n", buf.bytesused);
-
-    return 0;
-}
-
-int capture_image(int fd, bool *camAtice) {
-    struct v4l2_buffer buf = { 0 };
-    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    buf.memory = V4L2_MEMORY_MMAP;
-    buf.index = 0;
-    if (-1 == xioctl(fd, VIDIOC_QBUF, &buf)) {
-        perror("Query Buffer");
-        return 1;
-    }
-
-    fd_set fds;
-    if (!(*camAtice)) {
-        if (-1 == xioctl(fd, VIDIOC_STREAMON, &buf.type)) {
-            perror("Start Capture");
-            return 1;
-        }
-        FD_ZERO(&fds);
-        FD_SET(fd, &fds);
-        (*camAtice) = true;
-    }
-    struct timeval tv = { 0 };
-    tv.tv_sec = 2;
-    int r = select(fd + 1, &fds, NULL, NULL, &tv);
-    if (-1 == r) {
-        perror("Waiting for Frame");
-        return 1;
-    }
-
-    if (-1 == xioctl(fd, VIDIOC_DQBUF, &buf)) {
-        perror("Retrieving Frame");
-        return 1;
-    }
-//    printf("saving image\n");
-
-//    IplImage* frame;
-//    CvMat cvmat = cvMat(fmt.fmt.pix.height, fmt.fmt.pix.width, CV_8UC4, (void*) buffer);
-//    frame = cvDecodeImage(&cvmat, 1);
-//    cvNamedWindow("window", CV_WINDOW_AUTOSIZE);
-//    cvShowImage("window", frame);
-//    cvWaitKey(0);
-//    cvSaveImage("image.jpg", frame, 0);
-
-    uint height = fmt.fmt.pix.height;
-    uint width = fmt.fmt.pix.width;
-    uint fps_set = fmt.fmt.vbi.sampling_rate;
-//    uint fps_set = fmt.fmt.vbi.sampling_rate;
-//   cv::Mat myuv(height + height / 2, width, CV_8UC1, (void*) buffer);
-    cv::Mat myuv(height, width, CV_8UC2, (void*) buffer);
-    cv::Mat mrgb(height, width, CV_8UC3);
-    cv::cvtColor(myuv, mrgb, CV_YUV2BGR_YUYV);
-    cv::imshow("OUT IMAGE", mrgb);
-    if (cv::waitKey(1) == 27)
-        return 1;
-
-    return 0;
-}
-
-BOOST_AUTO_TEST_CASE(checkPS4Eye) {
-//int main() {
-    int fd;
-
-    fd = open("/dev/video1", O_RDWR);
-    if (fd == -1) {
-        perror("Opening video device");
-//        return 1;
-    }
-    if (print_caps(fd))
-        perror("ERROR 1");
-//        return 1;
-
-    if (init_mmap(fd))
-        perror("ERROR 2");
-//        return 1;
-    int i;
-    bool camAtice = false;
-    while (true) {
-//    for (i = 0; i < 5; i++) {
-        if (capture_image(fd, &camAtice))
-            perror("ERROR 3");
-//            return 1;
-    }
-    close(fd);
+//    BOOST_CHECK_EQUAL(true, hasData);
 }
