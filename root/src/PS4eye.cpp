@@ -7,17 +7,41 @@
 
 #include <DeviceUtils.h>
 #include <PS4eye.h>
-#include <cstring>
-#include <string>
 #include <iostream>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #define PS4EYE_DEVICE_IDVENDOR "05a9"
 #define PS4EYE_DEVICE_IDPRODUCT "058a"
 #define PS4EYE_DEVICE_SYSNAME "video"
 
-PS4eye::PS4eye(unsigned int deviceNum, resolutionEnum resolution = PS4EYE_RESOLUTION_640x400, frameRateEnum frameRate = PS4EYE_FPS_30) {
-//    videoCapture.set(CV_CAP_PROP_FRAME_WIDTH, (double) PS4EYE_RESOLUTION_640x400);
-    videoCapture = cv::VideoCapture(deviceNum);
+#define PS4EYE_RESOLUTION_HD_WIDTH 3448
+#define PS4EYE_RESOLUTION_HD_HEIGHT 808
+
+#define PS4EYE_RESOLUTION_VGA_WIDTH 1748
+#define PS4EYE_RESOLUTION_VGA_HEIGHT 408
+
+#define PS4EYE_RESOLUTION_VGA_LOW_WIDTH 640
+#define PS4EYE_RESOLUTION_VGA_LOW_HEIGHT 200
+
+PS4eye::PS4eye(std::string device, resolutionEnum resolution, float frameRate) {
+    if (resolution == PS4EYE_RESOLUTION_320x200) {
+        this->videoDevice = new V4LTools(device.c_str(), PS4EYE_RESOLUTION_VGA_LOW_HEIGHT, PS4EYE_RESOLUTION_VGA_LOW_WIDTH, frameRate);
+        this->roi = cv::Rect(48, 0, 320 * 2, 200);
+        this->rawFrame = cv::Mat(PS4EYE_RESOLUTION_VGA_LOW_HEIGHT, PS4EYE_RESOLUTION_VGA_LOW_WIDTH, CV_8UC2);
+        this->frame = cv::Mat(roi.height, roi.width, CV_8UC3);
+
+    } else if (resolution == PS4EYE_RESOLUTION_1280x800) {
+        this->videoDevice = new V4LTools(device.c_str(), PS4EYE_RESOLUTION_HD_HEIGHT, PS4EYE_RESOLUTION_HD_WIDTH, frameRate);
+        this->roi = cv::Rect(48, 0, 1280 * 2, 800);
+        this->rawFrame = cv::Mat(PS4EYE_RESOLUTION_HD_HEIGHT, PS4EYE_RESOLUTION_HD_WIDTH, CV_8UC2);
+        this->frame = cv::Mat(roi.height, roi.width, CV_8UC3);
+
+    } else {
+        this->videoDevice = new V4LTools(device.c_str(), PS4EYE_RESOLUTION_VGA_HEIGHT, PS4EYE_RESOLUTION_VGA_WIDTH, frameRate);
+        this->roi = cv::Rect(48, 0, 1280, 400);
+        this->rawFrame = cv::Mat(PS4EYE_RESOLUTION_VGA_HEIGHT, PS4EYE_RESOLUTION_VGA_WIDTH, CV_8UC2);
+        this->frame = cv::Mat(roi.height, roi.width, CV_8UC3);
+    }
 }
 
 std::vector<unsigned int> PS4eye::ps4eyeDevices(std::vector<std::string> *path) {
@@ -48,26 +72,42 @@ std::vector<unsigned int> PS4eye::ps4eyeDevices(std::vector<std::string> *path) 
 }
 
 cv::Mat PS4eye::grabFrame() {
-    cv::Mat frame;
-    videoCapture >> frame;
+    this->rawFrame.data = videoDevice->graFrame();
+    cv::cvtColor(this->rawFrame(roi), this->frame, CV_YUV2BGR_YUYV);
     return frame;
 }
 
 PS4eye::resolutionEnum PS4eye::getResolution() {
-    double out = videoCapture.get(CV_CAP_PROP_FRAME_WIDTH);
-    std::cout << " LARGURA " << out << std::endl;
-    return PS4EYE_RESOLUTION_640x400;
+    uint height, width;
+    float fps = 0;
+    this->videoDevice->getCameraParameters(height, width, fps);
+
+    resolutionEnum resolution;
+    switch (height) {
+    case PS4EYE_RESOLUTION_VGA_HEIGHT:
+        resolution = PS4EYE_RESOLUTION_640x400;
+        break;
+    case PS4EYE_RESOLUTION_HD_HEIGHT:
+        resolution = PS4EYE_RESOLUTION_1280x800;
+        break;
+    case PS4EYE_RESOLUTION_VGA_LOW_HEIGHT:
+        resolution = PS4EYE_RESOLUTION_320x200;
+        break;
+    }
+    return resolution;
 }
 PS4eye::frameRateEnum PS4eye::getFrameRate() {
 
-    double out = videoCapture.get(CV_CAP_PROP_FPS);
-    std::cout << " FPS " << out << std::endl;
-    return PS4EYE_FPS_30;
+    uint height, width;
+    float fps = 0;
+    this->videoDevice->getCameraParameters(height, width, fps);
+    return (int) fps;
 }
 
-void setResolution(PS4eye::resolutionEnum) {
-
-}
-void setFrameRate(PS4eye::frameRateEnum) {
+PS4eye::~PS4eye() {
+    delete (videoDevice);
 }
 
+bool PS4eye::isActive() {
+    return this->videoDevice->isActive();
+}

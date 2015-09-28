@@ -24,41 +24,19 @@
 #include <boost/test/unit_test_suite.hpp>
 
 BOOST_AUTO_TEST_CASE(checkPS4eyeDeviceSearch) {
-//
-//    std::vector<std::string> devicePath;
-//    std::vector<uint> deviceNum = PS4eye::ps4eyeDevices(&devicePath);
-//
-//    std::cout << "TESTE METHOD SEARCH PS4eye DEVICES" << std::endl;
-//    for (int i = 0; i < deviceNum.size(); ++i) {
-//        std::cout << "DEVICE NUM: " << deviceNum[i] << " PATH: " << devicePath[i] << std::endl;
-//        BOOST_CHECK_EQUAL("/dev/video1", devicePath[i]);
-//        BOOST_CHECK_EQUAL(1, deviceNum[i]);
-//    }
 
+    std::vector<std::string> devicesPaths;
+    PS4eye::ps4eyeDevices(&devicesPaths);
+
+    PS4eye ps4eyeDevice(devicesPaths[0], PS4eye::PS4EYE_RESOLUTION_1280x800, PS4eye::PS4EYE_FPS_30);
+
+    cv::Mat frame;
+    while (ps4eyeDevice.isActive()) {
+        cv::imshow("OUT IMAGE", ps4eyeDevice.grabFrame());
+        cv::waitKey(1);
+    }
 }
 
-BOOST_AUTO_TEST_CASE(checkPS4Eye) {
-
-//    struct timeb start, end;
+//BOOST_AUTO_TEST_CASE(checkPS4Eye) {
 //
-//    PS4eye ps4eye(PS4eye::ps4eyeDevices()[0]);
-//
-//    while (true) {
-//        ftime(&start);
-//
-//        cv::imshow("PS4Eye", ps4eye.grabFrame());
-//        ps4eye.getFrameRate();
-//        ps4eye.getResolution();
-//        cv::waitKey(1);
-//
-//        ftime(&end);
-//        double sec = ((end.time - start.time) + (end.millitm - start.millitm) / 1000.0);
-//        uint fps = 1.0 / sec * 1.0;
-//
-//        std::cout << " PS4EYE FPS =  " << fps;
-//        std::cout << " SECONDS =  " << sec;
-//        std::cout << std::endl;
-//
-//    }
-
-}
+//}

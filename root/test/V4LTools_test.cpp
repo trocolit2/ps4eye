@@ -48,6 +48,7 @@ BOOST_AUTO_TEST_CASE(checkV4lToolGoodInit) {
 //    cv::Mat stereoImage(frame_VGA.height, frame_VGA.width, CV_8UC3);
 //        cv::cvtColor(rawImage(frame_VGA), stereoImage, CV_YUV2BGR_YUYV);
 
+
     V4LTools videoDevice(devicePath, RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_WIDTH);
 
     bool hasData = false;
@@ -62,21 +63,21 @@ BOOST_AUTO_TEST_CASE(checkV4lToolGoodInit) {
     BOOST_CHECK_EQUAL(true, hasData);
 }
 
-BOOST_AUTO_TEST_CASE(checkV4lToolInitAndChangeCameraParameters) {
-
-//    cv::Mat rawImage(RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_WIDTH, CV_8UC2);
-//    cv::Mat stereoImage(frame_VGA.height, frame_VGA.width, CV_8UC3);
-//        cv::cvtColor(rawImage(frame_VGA), stereoImage, CV_YUV2BGR_YUYV);
-
-    V4LTools videoDevice(devicePath, RESOLUTION_HD_HEIGHT, RESOLUTION_HD_WIDTH);
-    unsigned char *bufHD = videoDevice.graFrame();
-
-//    videoDevice.resetCameraParameters(RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_HEIGHT, 120);
-//    unsigned char *bufVGA = videoDevice.graFrame();
+//BOOST_AUTO_TEST_CASE(checkV4lToolInitAndChangeCameraParameters) {
 //
-//    unsigned int width = 0, height = 0;
-//    float fps = 0;
-//    videoDevice.getCameraParameters(height, width, fps);
-
-//    BOOST_CHECK_EQUAL(true, hasData);
-}
+////    cv::Mat rawImage(RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_WIDTH, CV_8UC2);
+////    cv::Mat stereoImage(frame_VGA.height, frame_VGA.width, CV_8UC3);
+////        cv::cvtColor(rawImage(frame_VGA), stereoImage, CV_YUV2BGR_YUYV);
+//
+//    V4LTools videoDevice(devicePath, RESOLUTION_HD_HEIGHT, RESOLUTION_HD_WIDTH);
+//    unsigned char *bufHD = videoDevice.graFrame();
+//
+////    videoDevice.resetCameraParameters(RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_HEIGHT, 120);
+////    unsigned char *bufVGA = videoDevice.graFrame();
+////
+////    unsigned int width = 0, height = 0;
+////    float fps = 0;
+////    videoDevice.getCameraParameters(height, width, fps);
+//
+////    BOOST_CHECK_EQUAL(true, hasData);
+//}

@@ -12,7 +12,7 @@ find_package(OpenCV REQUIRED)
 include_directories(v4ltool)
 add_subdirectory(v4ltool)
 
-add_library(ps4eyeLibrary PS4eye.cpp DeviceUtils.cpp V4LTools.cpp)
+add_library(ps4eyeLibrary V4LTools.cpp DeviceUtils.cpp PS4eye.cpp)
 set(SOURCE_LIBS_LOCAL ps4eyeLibrary ${OpenCV_LIBS} "-ludev")
 set(SOURCE_LIBS ${SOURCE_LIBS_LOCAL} ${SOURCE_LIBS} PARENT_SCOPE)
 

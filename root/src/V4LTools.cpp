@@ -23,7 +23,6 @@ V4LTools::~V4LTools() {
     close_v4l2(this->videoIn);
     free(this->videoIn);
     sleep(5);
-    std::cout << "SAIU DO VIDEO IN" << std::endl;
 
 }
 
