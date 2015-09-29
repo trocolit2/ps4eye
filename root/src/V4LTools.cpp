@@ -19,10 +19,7 @@ V4LTools::V4LTools(std::string devicePath, unsigned int height, int width, float
 }
 
 V4LTools::~V4LTools() {
-
-    close_v4l2(this->videoIn);
-    free(this->videoIn);
-    sleep(5);
+    this->release();
 
 }
 
@@ -53,3 +50,8 @@ void V4LTools::getCameraParameters(unsigned int &height, unsigned int &width, fl
     fps = this->videoIn->fps;
 }
 
+void V4LTools::release() {
+
+    videoIn->signalquit = -1;
+    close_v4l2(this->videoIn);
+}

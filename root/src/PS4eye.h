@@ -35,6 +35,7 @@ public:
     cv::Mat grabFrame();
     resolutionEnum getResolution();
     frameRateEnum getFrameRate();
+    void release();
 
     static std::vector<unsigned int> ps4eyeDevices(std::vector<std::string> *path = 0);
 

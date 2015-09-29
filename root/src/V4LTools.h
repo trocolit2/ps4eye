@@ -24,6 +24,7 @@ public:
     bool isActive();
     void resetCameraParameters(unsigned int height, unsigned int width, float fps);
     void getCameraParameters(unsigned int &height, unsigned int &width, float &fps);
+    void release();
 
 private:
     struct vdIn *videoIn;

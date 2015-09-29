@@ -31,6 +31,7 @@ static cv::Rect frame_VGA(48, 0, 1280, 400);
 static cv::Rect frame_HD(48, 0, 1280 * 2, 800);
 
 static std::string devicePath;
+struct timeb start, end;
 
 struct defineDevice {
     defineDevice() {
@@ -44,21 +45,16 @@ BOOST_GLOBAL_FIXTURE(defineDevice);
 
 BOOST_AUTO_TEST_CASE(checkV4lToolGoodInit) {
 
-//    cv::Mat rawImage(RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_WIDTH, CV_8UC2);
-//    cv::Mat stereoImage(frame_VGA.height, frame_VGA.width, CV_8UC3);
-//        cv::cvtColor(rawImage(frame_VGA), stereoImage, CV_YUV2BGR_YUYV);
-
-
-    V4LTools videoDevice(devicePath, RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_WIDTH);
-
+    V4LTools videoDevice(devicePath, RESOLUTION_VGA_HEIGHT, RESOLUTION_VGA_WIDTH, 120);
     bool hasData = false;
 
     unsigned char * buf = 0;
-
     for (int var = 0; var < 10; ++var) {
         buf = videoDevice.graFrame();
         hasData = (buf != 0);
     }
+
+    videoDevice.release();
 
     BOOST_CHECK_EQUAL(true, hasData);
 }

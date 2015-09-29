@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(checkSUBSYSTEMDeviceSearch_testCase) {
     std::vector<std::string> values = { "hidraw" };
     std::vector<deviceAttributes> devices = utils.getDevicesFrom(attributes, values);
 
-    BOOST_CHECK_EQUAL(devices.size() > 1, true);
+    BOOST_CHECK_EQUAL(devices.size() > 0, true);
 }
 
 BOOST_AUTO_TEST_CASE(checkIDVENDORandIDPRODUCTDeviceSearch_testCase) {

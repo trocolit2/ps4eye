@@ -23,21 +23,89 @@
 #include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test_suite.hpp>
 
-BOOST_AUTO_TEST_CASE(checkPS4eyeDeviceSearch) {
+static struct timeb start, end;
+static uint limitFrames = 100;
 
-    std::vector<std::string> devicesPaths;
-    PS4eye::ps4eyeDevices(&devicesPaths);
+static std::string devicePath;
+struct defineDevice {
+    defineDevice() {
+        std::vector<std::string> devicesPath;
+        PS4eye::ps4eyeDevices(&devicesPath);
+        devicePath = devicesPath[0];
+    }
+};
 
-    PS4eye ps4eyeDevice(devicesPaths[0], PS4eye::PS4EYE_RESOLUTION_1280x800, PS4eye::PS4EYE_FPS_30);
+BOOST_GLOBAL_FIXTURE(defineDevice);
+
+BOOST_AUTO_TEST_CASE(checkPS4eyeLoadDeviceWithVGAAnd30Fps) {
+
+    PS4eye *ps4eyeDevice = new PS4eye(devicePath, PS4eye::PS4EYE_RESOLUTION_640x400, PS4eye::PS4EYE_FPS_30);
+
+    uint countFrames = 0;
+    double avgFps = 0;
 
     cv::Mat frame;
-    while (ps4eyeDevice.isActive()) {
-        cv::imshow("OUT IMAGE", ps4eyeDevice.grabFrame());
-        cv::waitKey(1);
+    for (uint i = 0; i < limitFrames; ++i) {
+        ftime(&start);
+        frame = ps4eyeDevice->grabFrame();
+        ftime(&end);
+        avgFps += 1.0 / ((end.time - start.time) + (end.millitm - start.millitm) * 0.001);
+        ++countFrames;
     }
 
+    delete (ps4eyeDevice);
+//    free(ps4eyeDevice);
+
+    BOOST_CHECK_EQUAL(frame.cols, 640 * 2);
+    BOOST_CHECK_EQUAL(frame.rows, 400);
+    BOOST_CHECK_GE(ceil(avgFps / countFrames), 30.0);
 }
 
-//BOOST_AUTO_TEST_CASE(checkPS4Eye) {
+//BOOST_AUTO_TEST_CASE(checkPS4eyeLoadDeviceWithVGAAnd60Fps) {
 //
+//    PS4eye ps4eyeDevice(devicePath, PS4eye::PS4EYE_RESOLUTION_640x400, PS4eye::PS4EYE_FPS_60);
+//
+//    uint countFrames = 0;
+//    double avgFps = 0;
+//
+//    cv::Mat frame;
+//    for (uint i = 0; i < limitFrames; ++i) {
+//        ftime(&start);
+//
+//        frame = ps4eyeDevice.grabFrame();
+//
+//        ftime(&end);
+//        avgFps += 1.0 / ((end.time - start.time) + (end.millitm - start.millitm) * 0.001);
+//        ++countFrames;
+////        std::cout << "\r FPS =  " << avgFps / countFrames << std::endl;
+//    }
+//
+//    BOOST_CHECK_EQUAL(frame.cols, 640 * 2);
+//    BOOST_CHECK_EQUAL(frame.rows, 400);
+//    BOOST_CHECK_GE(ceil(avgFps / countFrames), 60.0);
+//}
+//
+//BOOST_AUTO_TEST_CASE(checkPS4eyeLoadDeviceWithVGAAnd120Fps) {
+//
+//    sleep(5);
+//    PS4eye ps4eyeDevice(devicePath, PS4eye::PS4EYE_RESOLUTION_640x400, PS4eye::PS4EYE_FPS_120);
+//
+//    uint countFrames = 0;
+//    double avgFps = 0;
+//
+//    cv::Mat frame;
+//    for (uint i = 0; i < limitFrames; ++i) {
+//        ftime(&start);
+//
+//        frame = ps4eyeDevice.grabFrame();
+//
+//        ftime(&end);
+//        avgFps += 1.0 / ((end.time - start.time) + (end.millitm - start.millitm) * 0.001);
+//        ++countFrames;
+////        std::cout << "\r FPS =  " << avgFps / countFrames << std::endl;
+//    }
+//
+//    BOOST_CHECK_EQUAL(frame.cols, 640 * 2);
+//    BOOST_CHECK_EQUAL(frame.rows, 400);
+//    BOOST_CHECK_GE(ceil(avgFps / countFrames), 120);
 //}

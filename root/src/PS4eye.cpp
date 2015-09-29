@@ -105,9 +105,14 @@ PS4eye::frameRateEnum PS4eye::getFrameRate() {
 }
 
 PS4eye::~PS4eye() {
-    delete (videoDevice);
+    videoDevice->release();
 }
 
 bool PS4eye::isActive() {
     return this->videoDevice->isActive();
+}
+
+void PS4eye::release() {
+    videoDevice->release();
+    delete (videoDevice);
 }
