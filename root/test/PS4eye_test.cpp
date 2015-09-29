@@ -35,6 +35,7 @@ BOOST_AUTO_TEST_CASE(checkPS4eyeDeviceSearch) {
         cv::imshow("OUT IMAGE", ps4eyeDevice.grabFrame());
         cv::waitKey(1);
     }
+
 }
 
 //BOOST_AUTO_TEST_CASE(checkPS4Eye) {
