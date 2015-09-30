@@ -47,8 +47,15 @@ include_directories(${include_build_path})
 include_directories(${source_path})
 add_subdirectory(${source_path})
 
+##########################
+## SAMPLE MAIN PATH ##
+##########################
+include_directories(${sample_path})
+add_subdirectory(${sample_path})
+
 ####################
 ## TEST MAIN PATH ##
 ####################
 enable_testing()
 add_subdirectory(${test_path})
+

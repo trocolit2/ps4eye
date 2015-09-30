@@ -39,7 +39,7 @@ BOOST_GLOBAL_FIXTURE(defineDevice);
 
 BOOST_AUTO_TEST_CASE(checkPS4eyeLoadDeviceWithVGAAnd30Fps) {
 
-    PS4eye *ps4eyeDevice = new PS4eye(devicePath, PS4eye::PS4EYE_RESOLUTION_640x400, PS4eye::PS4EYE_FPS_30);
+    PS4eye *ps4eyeDevice = new PS4eye(devicePath, PS4eye::PS4EYE_RESOLUTION_1280x800, PS4eye::PS4EYE_FPS_30);
 
     uint countFrames = 0;
     double avgFps = 0;
@@ -54,10 +54,9 @@ BOOST_AUTO_TEST_CASE(checkPS4eyeLoadDeviceWithVGAAnd30Fps) {
     }
 
     delete (ps4eyeDevice);
-//    free(ps4eyeDevice);
 
-    BOOST_CHECK_EQUAL(frame.cols, 640 * 2);
-    BOOST_CHECK_EQUAL(frame.rows, 400);
+    BOOST_CHECK_EQUAL(frame.cols, 1280 * 2);
+    BOOST_CHECK_EQUAL(frame.rows, 800);
     BOOST_CHECK_GE(ceil(avgFps / countFrames), 30.0);
 }
 
