@@ -16,3 +16,6 @@ target_link_libraries(ps4eye_stereo ${SOURCE_LIBS} ${OpenCV_LIBS})
 add_executable(ps4eye_calib ps4eye_calib2.cpp)
 target_link_libraries(ps4eye_calib ${SOURCE_LIBS} ${OpenCV_LIBS})
 
+add_executable(stereo_calib stereo_calib.cpp)
+target_link_libraries(stereo_calib ${SOURCE_LIBS} ${OpenCV_LIBS})
+

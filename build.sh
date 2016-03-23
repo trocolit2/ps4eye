@@ -9,8 +9,11 @@ var_make="make"
 var_test="test"
 var_cmake="cmake"
 var_install="install"
+var_check="check"
 
 
+
+echo " ## Start build project $var_folderName ## "
 
 
 #### INSTALL PROCESSS
@@ -18,11 +21,17 @@ if [ "$1" = "$var_install" ] || [ "$2" = "$var_install" ] || [ "$3" = "$var_inst
 then
 	cd root
 	. install.sh
-	cd ..
+	cd ../../../
 	echo "INSTALL DONE"
 fi
 
-echo " ## Start build project $var_folderName ## "
+if [ "$1" = "$var_check" ] || [ "$2" = "$var_check" ] || [ "$3" = "$var_check" ] || [ "$4" = "$var_check" ]
+then
+        cd root
+        . install.sh test
+        cd ..
+        echo "CHECK DONE"
+fi
 
 if [ ! -d "build" ];
 then

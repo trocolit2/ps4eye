@@ -53,7 +53,7 @@ if [ "$argument1" != "remove" ];then
 	echo "Check Ubuntu Kernel"
 
 	kernel_version=$(uname -r | sed 's/\(\-[0-9]*\-[a-zA-Z]*\)//')
-	kernel_reference="3.16.0"
+	kernel_reference="3.17.0"
 	if [ "$kernel_version" \< "$kernel_reference" ] ; then
 		echo "${red}ERROR!! Kernel version less than 3.16. Please install compatible Kernel. ${standColor}"
 		exit 0
@@ -241,9 +241,11 @@ ps4eyefolder="drive"
 		done
 	
 		echo -e "\nThe way of PS4eye is: $way_device"
+		
+		echo "luvcview -d $way_device -i 60 -s 1748x40n"
 
 		luvcview -d $way_device -i 60 -s 1748x408
-
+		
 
 	fi
 
