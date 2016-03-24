@@ -387,10 +387,10 @@ int main(int argc, char** argv) {
     "{c2  |        cam2|            2|Camera 2 Index}";
     CommandLineParser parser(argc, argv, keys.c_str());
 
-    if(parser.has("help")) {
-        parser.printMessage();
-        exit(-1);
-    }
+//    if(parser.has("help")) {
+//        parser.printMessage();
+//        exit(-1);
+//    }
     boardSize = Size(parser.get<int>("w"), parser.get<int>("h"));
     std::cout<<"boardSize "<<boardSize<<std::endl;
 
