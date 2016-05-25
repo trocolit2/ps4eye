@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
         std::cout << "NO PS4EYE DEVICE FOUND" << std::endl;
         return 1;
     }
-    PS4eye ps4eyeDevice(devicesPath[0], PS4eye::PS4EYE_RESOLUTION_640x400, PS4eye::PS4EYE_FPS_30);
+    PS4eye ps4eyeDevice(devicesPath[0], PS4eye::PS4EYE_RESOLUTION_1280x800, PS4eye::PS4EYE_FPS_60);
     static struct timeb start, end;
 
     uint countFrames = 0;
