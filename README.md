@@ -1,6 +1,6 @@
 # PS4EYE TOOL
 
-This library is a Tool use ps4eye in OpenCV.
+Tool to use ps4eye device with OpenCV library.
 
 ## Compatible Operating Systems
 **Ubuntu 14.XX or later with kernel version 3.17.0 or later.**
@@ -11,7 +11,7 @@ This library is a Tool use ps4eye in OpenCV.
 * Boost-dev and Boost-test version 1.54 or later
 
 ## Install 
-To use this tool is necessary execute the bash script *build.sh* with  *install* and *check** as arguments, as shown in follown line:
+To install is necessary to execute the bash script *build.sh* with  *install* and *check** as arguments, as shown in follown line:
 
 `build.sh install check`
 
