@@ -3,11 +3,11 @@
 Tool to use ps4eye device with OpenCV library.
 
 ## Compatible Operating Systems
-**Ubuntu 14.XX or later with kernel version 3.17.0 or later.**
+**Ubuntu 14.04.**
 
 
 ## Required Libraries
-* Opencv 2.4.12
+* Opencv 2.4.X
 * Boost-dev and Boost-test version 1.54 or later
 
 ## Install 
