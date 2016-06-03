@@ -3,7 +3,7 @@
 Tool to use ps4eye device with OpenCV library.
 
 ## Compatible Operating Systems
-**Ubuntu 14.04.**
+**Ubuntu 16.04.**
 
 
 ## Required Libraries
