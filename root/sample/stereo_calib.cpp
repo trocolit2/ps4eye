@@ -238,6 +238,19 @@ void calibrateStereoCamera(Size imageSize) {
     Mat rmap[2][2];
     initUndistortRectifyMap(cameraMatrix[0], distCoeffs[0], R1, P1, imageSize, CV_16SC2, rmap[0][0], rmap[0][1]);
     initUndistortRectifyMap(cameraMatrix[1], distCoeffs[1], R2, P2, imageSize, CV_16SC2, rmap[1][0], rmap[1][1]);
+
+    fs.open("validROI_remaps.yml", FileStorage::WRITE);
+    if (fs.isOpened()) {
+      fs << "validRoi_0" << validROI[0]
+        << "validRoi_1" << validROI[1]
+        << "remap_0_0" << rmap[0][0]
+        << "remap_0_1" << rmap[0][1]
+        << "remap_1_0" << rmap[1][0]
+        << "remap_1_1" << rmap[1][1];
+        fs.release();
+    } else
+        cout << "Error: Could not open extrinsics file";
+
     Mat canvas;
     double sf;
     int w, h;
@@ -271,18 +284,25 @@ void calibrateStereoCamera(Size imageSize) {
             remap(img, rimg, rmap[j][0], rmap[j][1], INTER_LINEAR);
             cimg = rimg;
 
-            Mat canvasPart = !isVerticalStereo ? canvas(Rect(w * j, 0, w, h)) : canvas(Rect(0, h * j, w, h));
+            Mat canvasPart = !isVerticalStereo ? canvas(Rect(w * j, 0, w, h)) :
+              canvas(Rect(0, h * j, w, h));
             resize(cimg, canvasPart, canvasPart.size(), 0, 0, INTER_AREA);
-            Rect vroi(cvRound(validROI[j].x * sf), cvRound(validROI[j].y * sf), cvRound(validROI[j].width * sf), cvRound(validROI[j].height * sf));
+            Rect vroi(cvRound(validROI[j].x * sf),
+                      cvRound(validROI[j].y * sf),
+                      cvRound(validROI[j].width * sf),
+                      cvRound(validROI[j].height * sf));
+
             rectangle(canvasPart, vroi, Scalar(0, 0, 255), 3, 8);
         }
 
         if (!isVerticalStereo)
             for (int j = 0; j < canvas.rows; j += 16)
-                line(canvas, Point(0, j), Point(canvas.cols, j), Scalar(0, 255, 0), 1, 8);
+                line(canvas, Point(0, j), Point(canvas.cols, j),
+                  Scalar(0, 255, 0), 1, 8);
         else
             for (int j = 0; j < canvas.cols; j += 16)
-                line(canvas, Point(j, 0), Point(j, canvas.rows), Scalar(0, 255, 0), 1, 8);
+                line(canvas, Point(j, 0), Point(j, canvas.rows),
+                  Scalar(0, 255, 0), 1, 8);
 
         imshow("rectified", canvas);
         cv::waitKey();
