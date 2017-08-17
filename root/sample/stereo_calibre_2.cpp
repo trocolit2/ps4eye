@@ -36,9 +36,11 @@ const std::string keys =
   "{h    |  board_height|            6|Height of the board}"
   "{w    |    board_with|            9|Width of the board}"
   "{s    |   square_size|        0.035|Board Square Size in meter}"
-  "{im   |    input_mode|            0|Clicks stereo images before calibration.\
-                                       Use if you do not have stereo pair images \
-                                       saved}"
+  "{im   |    input_mode|            0| Type of stereo images samples.\
+     0 - Two files from cameras\
+     1 - One file from cameras\
+     2 - Two real-time cameras  caputure\
+     3 - One real-time camera caputure }"
   "{n    | number_images|           30|Number of stereo pair images}"
   "{dr   |     directory|            .|Directory of images}"
   "{prel |   prefix_left|  image_left_|Left image name prefix. Ex: image_left_}"
@@ -495,14 +497,9 @@ int main(int argc, char const *argv[]) {
     while(captures[0].grab() && captures[1].grab()) {
       captures[0].retrieve(image_left);
       captures[1].retrieve(image_right);
-
       showRectified(image_left, image_right, remap, canvas, is_vertical,
                     show_size, size_factor, valid_rois);
-
     }
-
-
-
 
   }else{
     // TODO
